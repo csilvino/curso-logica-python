@@ -5,31 +5,48 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Curso de Lógica com Python — Blocos</title>
 
-  <!-- Estilos -->
-  style.css
+  <!-- ===== CSS INLINE (SOS) ===== -->
+  <style>
+    :root { color-scheme: light; }
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background-color: #f0f8ff; margin: 0; padding: 20px;
+    }
+    h1 { color: #2e8b57; margin-top: 0; }
+    .wrap { display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start; }
+    #blocklyDiv { height: 440px; width: 640px; background:#fff; border:1px solid #ddd; }
+    button {
+      margin-top: 10px; padding: 10px 14px; font-size: 16px;
+      background-color: #4CAF50; color: white; border: none; cursor: pointer; border-radius: 6px;
+    }
+    button:active { transform: translateY(1px); }
+    pre {
+      background-color: #eee; padding: 10px; margin-top: 10px;
+      min-height: 100px; white-space: pre-wrap; border-radius: 6px; border:1px solid #ddd;
+    }
+    .side { min-width: 320px; flex: 1; }
+    .note { font-size: 12px; color:#555; }
+  </style>
 
-  <!-- Blockly (core + blocks + mensagens PT + gerador Python) -->
+  <!-- ===== Blockly (core + blocks + pt + gerador Python) ===== -->
   https://unpkg.com/blockly/blockly.min.js</script>
   https://unpkg.com/blockly/blocks.min.js</script>
   https://unpkg.com/blockly/msg/pt.js</script>
   https://unpkg.com/blockly/python.min.js</script>
 
-  <!-- Skulpt (Python no navegador) -->
-  https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js</script>
-  https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js</script>
-</head>
+  <!-- ===== Skulpt (Python no navegador) ===== -->
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skscript>
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib</head>
 <body>
   <h1>Curso de Lógica com Python</h1>
 
-  <div style="display:flex; gap:16px; flex-wrap:wrap;">
-    <!-- Área do Blockly -->
-    <div id="blocklyDiv" style="height: 420px; width: 620px; background:#fff;"></div>
-
-    <!-- Lado direito: botão + saída -->
-    <div style="min-width:320px; flex:1;">
+  <div class="wrap">
+    <div id="blocklyDiv" role="application" aria-label="Área dos blocos"></div>
+    <div class="side">
       <button id="runBtn" type="button">Executar código</button>
       <h4>Saída:</h4>
-      <pre id="output" aria-live="polite"></pre>
+      <pre id="output" aria-live="polite">Inicializando…</pre>
+      <p class="note">Dica: monte um bloco <b>Texto → imprimir</b> com “Olá, turma!” e clique em <b>Executar código</b>.</p>
     </div>
   </div>
 
@@ -61,7 +78,85 @@
     <category name="Variáveis" custom="VARIABLE" colour="330"></category>
   </xml>
 
-  <!-- Seu script -->
-  main.js</script>
+  <!-- ===== Script SOS (substitui seu main.js por enquanto) ===== -->
+  <script>
+    (function () {
+      const outEl = document.getElementById('output');
+      const log = (m) => { outEl.textContent += (outEl.textContent ? '\n' : '') + m; };
+      outEl.textContent = 'Carregando dependências…';
+
+      // Mostra erros JS na área de saída
+      window.onerror = function (message, source, lineno, colno, error) {
+        log(`ERRO JS: ${message} @ ${source}:${lineno}:${colno}`);
+        if (error && error.stack) log(error.stack);
+      };
+
+      // Checagem das dependências
+      function checkDeps() {
+        const deps = {
+          Blockly: !!window.Blockly,
+          BlocksLoaded: !!(window.Blockly && Blockly.Blocks && Object.keys(Blockly.Blocks).length),
+          PythonGen: !!(window.Blockly && Blockly.Python),
+          Skulpt: !!window.Sk),
+        };
+        const missing = Object.entries(deps).filter(([, ok]) => !ok).map(([k]) => k);
+        if (missing.length) {
+          log('Dependências ausentes: ' + missing.join(', '));
+          log('Verifique as <script> no <head> (ordem e URLs).');
+        } else {
+          log('Dependências OK ✔');
+        }
+        return missing.length === 0;
+      }
+
+      // Inicializa Blockly
+      let workspace = null;
+      try {
+        workspace = Blockly.inject('blocklyDiv', {
+          toolbox: document.getElementById('toolbox'),
+          grid: { spacing: 20, length: 3, colour: '#ccc', snap: true },
+          trashcan: true,
+          zoom: { controls: true, wheel: true },
+        });
+      } catch (e) {
+        log('Falha ao inicializar Blockly: ' + e.toString());
+      }
+
+      // Saída do Skulpt
+      function outf(text) {
+        outEl.textContent += text;
+        if (!text.endsWith('\n')) outEl.textContent += '\n';
+      }
+
+      // Leitor padrão para stdlib do Skulpt
+      function builtinRead(x) {
+        if (Sk.builtinFiles === undefined || Sk.builtinFiles['files'][x] === undefined) {
+          throw "File not found: '" + x + "'";
+        }
+        return Sk.builtinFiles['files'][x];
+      }
+
+      function runCode() {
+        outEl.textContent = '';
+        if (!checkDeps()) return;
+
+        const code = Blockly.Python.workspaceToCode(workspace).trim();
+        if (!code) {
+          log('Não há blocos ainda. Use "Texto → imprimir" e clique Executar.');
+          return;
+        }
+
+        Sk.configure({ output: outf, read: builtinRead });
+        Sk.misceval
+          .asyncToPromise(() => Sk.importMainWithBody('__main__', false, code, true))
+          .catch((err) => outf('Erro ao executar o código: ' + err.toString()));
+      }
+
+      document.getElementById('runBtn').addEventListener('click', runCode);
+
+      // Checagem inicial
+      checkDeps();
+    })();
+  </script>
 </body>
 </html>
