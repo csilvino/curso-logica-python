@@ -3,6 +3,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const outEl = document.getElementById('output');
   const runBtn = document.getElementById('runButton');
 
+  const workspace = Blockly.inject('blocklyDiv', {
+    toolbox: document.getElementById('toolbox')
+  });
+
   function logOut(msg) {
     outEl.textContent += msg + (msg.endsWith('
 ') ? '' : '
@@ -31,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function runCode() {
     checkDeps();
     try {
-      const code = Blockly.Python.workspaceToCode(Blockly.getMainWorkspace());
+      const code = Blockly.Python.workspaceToCode(workspace);
       Sk.configure({
         output: logOut,
         read: function (x) {
