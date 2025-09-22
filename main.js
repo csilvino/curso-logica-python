@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", function () {
   const outEl = document.getElementById('output');
   const runBtn = document.getElementById('runButton');
@@ -8,9 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   function logOut(msg) {
-    outEl.textContent += msg + (msg.endsWith('
-') ? '' : '
-');
+    outEl.textContent += msg + (msg.endsWith('\n') ? '' : '\n');
   }
 
   window.onerror = function (message, source, lineno, colno, error) {
