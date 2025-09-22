@@ -1,4 +1,3 @@
-
 Blockly.Python = new Blockly.Generator('Python');
 Blockly.Python.addReservedWords('import,from,as,class,def,return,if,elif,else,while,for,try,except,finally,with,lambda');
 Blockly.Python.ORDER_ATOMIC = 0;
