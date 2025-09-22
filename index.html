@@ -35,8 +35,9 @@
   https://unpkg.com/blockly/python.min.js</script>
 
   <!-- ===== Skulpt (Python no navegador) ===== -->
-  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skscript>
-  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib</head>
+  https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js</script>
+  https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js</script>
+</head>
 <body>
   <h1>Curso de Lógica com Python</h1>
 
@@ -97,7 +98,7 @@
           Blockly: !!window.Blockly,
           BlocksLoaded: !!(window.Blockly && Blockly.Blocks && Object.keys(Blockly.Blocks).length),
           PythonGen: !!(window.Blockly && Blockly.Python),
-          Skulpt: !!window.Sk),
+          Skulpt: !!window.Sk
         };
         const missing = Object.entries(deps).filter(([, ok]) => !ok).map(([k]) => k);
         if (missing.length) {
@@ -118,6 +119,23 @@
           trashcan: true,
           zoom: { controls: true, wheel: true },
         });
+        // Pré-carrega um bloco "imprimir Olá, turma!" para testar
+        const xmlText =
+          '<xml xmlns="https://developers.google.com/blockly/xml">' +
+            '<block type="text_print" x="30" y="20">' +
+              '<value name="TEXT">' +
+                '<shadow type="text"><field name="TEXT">Olá, turma!</field></shadow>' +
+              '</value>' +
+            '</block>' +
+          '</xml>';
+        const xmlDom = (Blockly.utils && Blockly.utils.xml && Blockly.utils.xml.textToDom)
+          ? Blockly.utils.xml.textToDom(xmlText)
+          : Blockly.Xml.textToDom(xmlText);
+        if (Blockly.Xml && Blockly.Xml.domToWorkspace) {
+          Blockly.Xml.domToWorkspace(xmlDom, workspace);
+        } else if (Blockly.utils && Blockly.utils.xml && Blockly.utils.xml.domToWorkspace) {
+          Blockly.utils.xml.domToWorkspace(xmlDom, workspace);
+        }
       } catch (e) {
         log('Falha ao inicializar Blockly: ' + e.toString());
       }
