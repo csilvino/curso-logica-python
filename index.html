@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Curso de Lógica com Python</title>
+  <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/skulpt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/skulpt-stdlib.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Curso de Lógica com Python</h1>
+  <div id="blocklyDiv" style="height: 400px; width: 100%;"></div>
+  <xml id="toolbox" style="display: none">
+    <block type="controls_if"></block>
+    <block type="controls_repeat_ext">
+      <value name="TIMES">
+        <shadow type="math_number">
+          <field name="NUM">5</field>
+        </shadow>
+      </value>
+    </block>
+    <block type="text_print"></block>
+    <block type="math_number">
+      <field name="NUM">0</field>
+    </block>
+    <block type="text">
+      <field name="TEXT">Olá!</field>
+    </block>
+  </xml>
+  <button onclick="runCode()">Executar Código</button>
+  <pre id="output"></pre>
+  <script src="main.js"></script>
+</body>
+</html>
