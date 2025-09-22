@@ -6,9 +6,11 @@ var workspace = Blockly.inject('blocklyDiv', {
 function runCode() {
   var code = Blockly.Python.workspaceToCode(workspace);
   document.getElementById('output').innerText = '';
+
   Sk.configure({
     output: function(text) {
-      document.getElementById('output').innerText += text;
+      document.getElementById('output').innerText += text + '
+';
     },
     read: function(x) {
       if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
@@ -16,7 +18,14 @@ function runCode() {
       return Sk.builtinFiles["files"][x];
     }
   });
-  Sk.misceval.asyncToPromise(function() {
-    return Sk.importMainWithBody("__main__", false, code, true);
-  });
+
+  try {
+    Sk.misceval.asyncToPromise(function() {
+      return Sk.importMainWithBody("__main__", false, code, true);
+    }).catch(function(err) {
+      document.getElementById('output').innerText = 'Erro ao executar o código: ' + err.toString();
+    });
+  } catch (e) {
+    document.getElementById('output').innerText = 'Erro de execução: ' + e.toString();
+  }
 }
