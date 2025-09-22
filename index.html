@@ -5,29 +5,22 @@
   <meta charset="UTF-8">
   <title>Curso de Lógica com Python</title>
   <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Curso de Lógica com Python</h1>
+  <p>Dica: monte um bloco Texto → imprimir com “Olá, turma!” e clique em Executar código.</p>
+
+  <div id="blocklyDiv" style="height: 300px; width: 100%;"></div>
+  <button onclick="runCode()">Executar código</button>
+  <pre id="output">Inicializando…
+</pre>
+
   <script src="https://unpkg.com/blockly/blockly.min.js"></script>
   <script src="https://unpkg.com/blockly/blocks.min.js"></script>
   <script src="https://unpkg.com/blockly/msg/pt.js"></script>
   <script src="https://unpkg.com/blockly/python.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
-</head>
-<body>
-  <h1>Curso de Lógica com Python</h1>
-  <p>Dica: monte um bloco <strong>Texto → imprimir</strong> com “Olá, turma!” e clique em <strong>Executar código</strong>.</p>
-
-  <div id="blocklyDiv" style="height: 400px; width: 100%;"></div>
-  <xml id="toolbox" style="display: none">
-    <block type="text_print"></block>
-    <block type="text">
-      <field name="TEXT">Olá, turma!</field>
-    </block>
-  </xml>
-
-  <button id="runBtn">Executar código</button>
-  <pre id="output">Inicializando…
-</pre>
-
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/skulpt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/skulpt-stdlib.js"></script>
   <script src="main.js"></script>
 </body>
 </html>
