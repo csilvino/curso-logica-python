@@ -1,37 +1,66 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-  <meta charset='utf-8'>
-  <title>Curso de Lógica com Python</title>
-  <script src='https://unpkg.com/blockly/blockly.min.js'></script>
-  <script src='https://cdn.jsdelivr.net/npm/skulpt@1.2.0/skulpt.min.js'></script>
-  <script src='https://cdn.jsdelivr.net/npm/skulpt@1.2.0/skulpt-stdlib.js'></script>
-  <link rel='stylesheet' href='style.css'>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Curso de Lógica com Python — Blocos</title>
+
+  <!-- Estilos -->
+  style.css
+
+  <!-- Blockly (core) -->
+  https://unpkg.com/blockly/blockly.min.js</script>
+  <!-- Gerador Python do Blockly -->
+  https://unpkg.com/blockly/python.min.js</script>
+
+  <!-- Skulpt (Python no navegador) -->
+  https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js</script>
+  https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js</script>
 </head>
 <body>
   <h1>Curso de Lógica com Python</h1>
-  <div id='blocklyDiv' style='height: 400px; width: 100%;'></div>
-  <xml id='toolbox' style='display: none'>
-    <block type='controls_if'></block>
-    <block type='controls_repeat_ext'>
-      <value name='TIMES'>
-        <shadow type='math_number'>
-          <field name='NUM'>3</field>
-        </shadow>
-      </value>
-    </block>
-    <block type='text_print'></block>
-    <block type='math_number'>
-      <field name='NUM'>0</field>
-    </block>
-    <block type='text'>
-      <field name='TEXT'>Olá!</field>
-    </block>
+
+  <div style="display:flex; gap:16px; flex-wrap:wrap;">
+    <!-- Área do Blockly -->
+    <div id="blocklyDiv" style="height: 420px; width: 620px; background:#fff;"></div>
+
+    <!-- Lado direito: botão + saída -->
+    <div style="min-width:320px; flex:1;">
+      <button id="runBtn" type="button">Executar código</button>
+      <h4>Saída:</h4>
+      <pre id="output" aria-live="polite"></pre>
+    </div>
+  </div>
+
+  <!-- Toolbox (blocos disponíveis) -->
+  <xml id="toolbox" style="display:none">
+    <category name="Lógica" colour="210">
+      <block type="controls_if"></block>
+      <block type="logic_compare"></block>
+      <block type="logic_operation"></block>
+      <block type="logic_boolean"></block>
+    </category>
+    <category name="Repetição" colour="120">
+      <block type="controls_repeat_ext">
+        <value name="TIMES">
+          <shadow type="math_number"><field name="NUM">5</field></shadow>
+        </value>
+      </block>
+      <block type="controls_whileUntil"></block>
+      <block type="controls_for"></block>
+    </category>
+    <category name="Matemática" colour="230">
+      <block type="math_number"></block>
+      <block type="math_arithmetic"></block>
+    </category>
+    <category name="Texto" colour="160">
+      <block type="text"></block>
+      <block type="text_print"></block>
+    </category>
+    <category name="Variáveis" custom="VARIABLE" colour="330"></category>
   </xml>
-  <button onclick='runCode()'>Executar Código</button>
-  <h3>Saída:</h3>
-  <pre id='output'></pre>
-  <script src='main.js'></script>
+
+  <!-- Seu script -->
+  main.js</script>
 </body>
 </html>
