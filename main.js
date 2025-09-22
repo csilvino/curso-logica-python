@@ -1,6 +1,8 @@
 
-(function () {
+document.addEventListener("DOMContentLoaded", function () {
   const outEl = document.getElementById('output');
+  const runBtn = document.getElementById('runButton');
+
   function logOut(msg) {
     outEl.textContent += msg + (msg.endsWith('
 ') ? '' : '
@@ -26,7 +28,7 @@
     }
   }
 
-  window.runCode = function () {
+  function runCode() {
     checkDeps();
     try {
       const code = Blockly.Python.workspaceToCode(Blockly.getMainWorkspace());
@@ -42,5 +44,7 @@
     } catch (e) {
       logOut('Erro ao executar: ' + e);
     }
-  };
-})();
+  }
+
+  runBtn.addEventListener('click', runCode);
+});
