@@ -47,4 +47,5 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   runBtn.addEventListener('click', runCode);
+  window.runCode = runCode;
 });
