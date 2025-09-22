@@ -1,33 +1,180 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Curso de Lógica com Python</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://unpkg.com/blockly/blockly.min.js"></script>
-  <script src="https://unpkg.com/blockly/blocks.min.js"></script>
-  <script src="https://unpkg.com/blockly/msg/pt.js"></script>
-  <script src="https://unpkg.com/blockly/python.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Curso de Lógica com Python — Blocos</title>
+
+  <!-- ===== CSS INLINE (SOS) ===== -->
+  <style>
+    :root { color-scheme: light; }
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background-color: #f0f8ff; margin: 0; padding: 20px;
+    }
+    h1 { color: #2e8b57; margin-top: 0; }
+    .wrap { display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start; }
+    #blocklyDiv { height: 440px; width: 640px; background:#fff; border:1px solid #ddd; }
+    button {
+      margin-top: 10px; padding: 10px 14px; font-size: 16px;
+      background-color: #4CAF50; color: white; border: none; cursor: pointer; border-radius: 6px;
+    }
+    button:active { transform: translateY(1px); }
+    pre {
+      background-color: #eee; padding: 10px; margin-top: 10px;
+      min-height: 100px; white-space: pre-wrap; border-radius: 6px; border:1px solid #ddd;
+    }
+    .side { min-width: 320px; flex: 1; }
+    .note { font-size: 12px; color:#555; }
+  </style>
+
+  <!-- ===== Blockly (core + blocks + pt + gerador Python) ===== -->
+  https://unpkg.com/blockly/blockly.min.js</script>
+  https://unpkg.com/blockly/blocks.min.js</script>
+  https://unpkg.com/blockly/msg/pt.js</script>
+  https://unpkg.com/blockly/python.min.js</script>
+
+  <!-- ===== Skulpt (Python no navegador) ===== -->
+  https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js</script>
+  https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js</script>
 </head>
 <body>
   <h1>Curso de Lógica com Python</h1>
-  <p>Dica: monte um bloco <strong>Texto → imprimir</strong> com “Olá, turma!” e clique em <strong>Executar código</strong>.</p>
 
-  <div id="blocklyDiv" style="height: 400px; width: 100%;"></div>
-  <xml id="toolbox" style="display: none">
-    <block type="text_print"></block>
-    <block type="text">
-      <field name="TEXT">Olá, turma!</field>
-    </block>
+  <div class="wrap">
+    <div id="blocklyDiv" role="application" aria-label="Área dos blocos"></div>
+    <div class="side">
+      <button id="runBtn" type="button">Executar código</button>
+      <h4>Saída:</h4>
+      <pre id="output" aria-live="polite">Inicializando…</pre>
+      <p class="note">Dica: monte um bloco <b>Texto → imprimir</b> com “Olá, turma!” e clique em <b>Executar código</b>.</p>
+    </div>
+  </div>
+
+  <!-- Toolbox (blocos disponíveis) -->
+  <xml id="toolbox" style="display:none">
+    <category name="Lógica" colour="210">
+      <block type="controls_if"></block>
+      <block type="logic_compare"></block>
+      <block type="logic_operation"></block>
+      <block type="logic_boolean"></block>
+    </category>
+    <category name="Repetição" colour="120">
+      <block type="controls_repeat_ext">
+        <value name="TIMES">
+          <shadow type="math_number"><field name="NUM">5</field></shadow>
+        </value>
+      </block>
+      <block type="controls_whileUntil"></block>
+      <block type="controls_for"></block>
+    </category>
+    <category name="Matemática" colour="230">
+      <block type="math_number"></block>
+      <block type="math_arithmetic"></block>
+    </category>
+    <category name="Texto" colour="160">
+      <block type="text"></block>
+      <block type="text_print"></block>
+    </category>
+    <category name="Variáveis" custom="VARIABLE" colour="330"></category>
   </xml>
 
-  <button id="runBtn">Executar código</button>
-  <pre id="output">Inicializando…
-</pre>
+  <!-- ===== Script SOS (substitui seu main.js por enquanto) ===== -->
+  <script>
+    (function () {
+      const outEl = document.getElementById('output');
+      const log = (m) => { outEl.textContent += (outEl.textContent ? '\n' : '') + m; };
+      outEl.textContent = 'Carregando dependências…';
 
-  <script src="main.js"></script>
+      // Mostra erros JS na área de saída
+      window.onerror = function (message, source, lineno, colno, error) {
+        log(`ERRO JS: ${message} @ ${source}:${lineno}:${colno}`);
+        if (error && error.stack) log(error.stack);
+      };
+
+      // Checagem das dependências
+      function checkDeps() {
+        const deps = {
+          Blockly: !!window.Blockly,
+          BlocksLoaded: !!(window.Blockly && Blockly.Blocks && Object.keys(Blockly.Blocks).length),
+          PythonGen: !!(window.Blockly && Blockly.Python),
+          Skulpt: !!window.Sk
+        };
+        const missing = Object.entries(deps).filter(([, ok]) => !ok).map(([k]) => k);
+        if (missing.length) {
+          log('Dependências ausentes: ' + missing.join(', '));
+          log('Verifique as <script> no <head> (ordem e URLs).');
+        } else {
+          log('Dependências OK ✔');
+        }
+        return missing.length === 0;
+      }
+
+      // Inicializa Blockly
+      let workspace = null;
+      try {
+        workspace = Blockly.inject('blocklyDiv', {
+          toolbox: document.getElementById('toolbox'),
+          grid: { spacing: 20, length: 3, colour: '#ccc', snap: true },
+          trashcan: true,
+          zoom: { controls: true, wheel: true },
+        });
+        // Pré-carrega um bloco "imprimir Olá, turma!" para testar
+        const xmlText =
+          '<xml xmlns="https://developers.google.com/blockly/xml">' +
+            '<block type="text_print" x="30" y="20">' +
+              '<value name="TEXT">' +
+                '<shadow type="text"><field name="TEXT">Olá, turma!</field></shadow>' +
+              '</value>' +
+            '</block>' +
+          '</xml>';
+        const xmlDom = (Blockly.utils && Blockly.utils.xml && Blockly.utils.xml.textToDom)
+          ? Blockly.utils.xml.textToDom(xmlText)
+          : Blockly.Xml.textToDom(xmlText);
+        if (Blockly.Xml && Blockly.Xml.domToWorkspace) {
+          Blockly.Xml.domToWorkspace(xmlDom, workspace);
+        } else if (Blockly.utils && Blockly.utils.xml && Blockly.utils.xml.domToWorkspace) {
+          Blockly.utils.xml.domToWorkspace(xmlDom, workspace);
+        }
+      } catch (e) {
+        log('Falha ao inicializar Blockly: ' + e.toString());
+      }
+
+      // Saída do Skulpt
+      function outf(text) {
+        outEl.textContent += text;
+        if (!text.endsWith('\n')) outEl.textContent += '\n';
+      }
+
+      // Leitor padrão para stdlib do Skulpt
+      function builtinRead(x) {
+        if (Sk.builtinFiles === undefined || Sk.builtinFiles['files'][x] === undefined) {
+          throw "File not found: '" + x + "'";
+        }
+        return Sk.builtinFiles['files'][x];
+      }
+
+      function runCode() {
+        outEl.textContent = '';
+        if (!checkDeps()) return;
+
+        const code = Blockly.Python.workspaceToCode(workspace).trim();
+        if (!code) {
+          log('Não há blocos ainda. Use "Texto → imprimir" e clique Executar.');
+          return;
+        }
+
+        Sk.configure({ output: outf, read: builtinRead });
+        Sk.misceval
+          .asyncToPromise(() => Sk.importMainWithBody('__main__', false, code, true))
+          .catch((err) => outf('Erro ao executar o código: ' + err.toString()));
+      }
+
+      document.getElementById('runBtn').addEventListener('click', runCode);
+
+      // Checagem inicial
+      checkDeps();
+    })();
+  </script>
 </body>
 </html>
